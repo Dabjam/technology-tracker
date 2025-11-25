@@ -58,7 +58,7 @@ function App() {
   
   return (
     <div className="app">
-      <h1>Трекер изучения технологий (Практика 22: Custom Hook)</h1>
+      <h1>Трекер изучения технологий (Практика 21-22: Custom Hook)</h1>
       
       {/* Форма и вывод списка - без изменений */}
       <form onSubmit={handleAddTech} className="add-form">
