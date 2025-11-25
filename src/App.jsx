@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, HashRouter } from 'react-router-dom';
 import TechnologyListPage from './pages/TechnologyListPage';
 import TechnologyDetailPage from './pages/TechnologyDetailPage';
 import { CssBaseline, ThemeProvider, createTheme, Box } from '@mui/material';
@@ -21,7 +21,7 @@ function App() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline /> 
-      <BrowserRouter> 
+      <HashRouter> 
         <Box 
           sx={{ 
             maxWidth: 1200, 
@@ -36,7 +36,7 @@ function App() {
             <Route path="*" element={<h2>404 | Страница не найдена</h2>} /> 
           </Routes>
         </Box>
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }
