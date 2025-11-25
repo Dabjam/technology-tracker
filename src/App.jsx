@@ -29,7 +29,6 @@ function App() {
     <ThemeProvider theme={defaultTheme}>
       {/* 2. CssBaseline: сброс браузерных стилей (как normalize.css) */}
       <CssBaseline /> 
-      
       <BrowserRouter> 
         {/* Box - универсальный контейнер MUI, используем его для центрирования */}
         <Box 
