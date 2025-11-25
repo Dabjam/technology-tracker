@@ -1,8 +1,5 @@
-// src/hooks/useTechnologiesApi.js
-
 import { useState, useEffect } from 'react';
 
-// Имитация внешних данных
 const MOCK_API_DATA = [
     { id: 1, title: 'HTML & CSS Basics', description: 'Основы разметки и стилизации', status: 'completed' },
     { id: 2, title: 'JavaScript ES6+', description: 'Современный синтаксис JS', status: 'in-progress' },
@@ -16,16 +13,12 @@ function useTechnologiesApi() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Функция для имитации запроса
   const fetchTechnologies = () => {
     setLoading(true);
     setError(null);
-
-    // Имитация задержки сети (3 секунды)
     const delay = 3000; 
     
     setTimeout(() => {
-        // Имитация успешного ответа
         setData(MOCK_API_DATA);
         setLoading(false);
 
@@ -37,12 +30,10 @@ function useTechnologiesApi() {
     }, delay);
   };
 
-  // Выполнение запроса при монтировании компонента
   useEffect(() => {
     fetchTechnologies();
-  }, []); // Пустой массив зависимостей - запуск один раз
+  }, []); 
 
-  // Возвращаем данные, состояние загрузки и ошибку
   return { technologies: data, loading, error, refetch: fetchTechnologies };
 }
 

@@ -32,9 +32,6 @@
     background-color: #2980b9;
 }
 
-/* src/App.css (в самый низ) */
-
-/* Стили для роутинга */
 .detail-container {
     background: white;
     padding: 20px;
@@ -77,13 +74,10 @@
     color: white;
     font-weight: bold;
 }
-/* Цвета для активных кнопок */
 .status-buttons button:nth-child(1).active { background-color: #FF5722; border-color: #FF5722; } /* not-started */
 .status-buttons button:nth-child(2).active { background-color: #2196F3; border-color: #2196F3; } /* in-progress */
 .status-buttons button:nth-child(3).active { background-color: #4CAF50; border-color: #4CAF50; } /* completed */
 
-
-/* Стили для API (загрузка/ошибка) */
 .loading-state, .error-state {
     text-align: center;
     padding: 50px;
