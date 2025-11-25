@@ -1,7 +1,4 @@
-// src/components/TechnologyCard.jsx
 import './TechnologyCard.css';
-
-// onStatusChange удален из props
 function TechnologyCard({ title, description, status }) { 
   
   const getStatusClass = (status) => {
@@ -15,7 +12,6 @@ function TechnologyCard({ title, description, status }) {
   return (
     <div 
       className={`technology-card ${getStatusClass(status)}`}
-      // !!! onClick удален !!!
     >
       <h3>{title}</h3>
       <p>{description}</p>

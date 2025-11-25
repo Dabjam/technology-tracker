@@ -1,16 +1,10 @@
-// src/pages/TechnologyDetailPage.jsx
-
 import { useParams, Link } from 'react-router-dom';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 function TechnologyDetailPage() {
-  // Получаем параметр 'id' из URL (например, /tech/123)
   const { id } = useParams(); 
   
   const [technologies, setTechnologies] = useLocalStorage('technology-tracker-data', []);
-  
-  // Ищем нужную технологию по ID
-  // ВАЖНО: id из useParams - это строка, поэтому используем ==
   const technology = technologies.find(tech => tech.id == id); 
   
   if (!technology) {
@@ -22,7 +16,6 @@ function TechnologyDetailPage() {
     );
   }
 
-  // Функция изменения статуса (как в App.jsx, но только для одной технологии)
   const updateStatus = (newStatus) => {
     setTechnologies(prevTech => prevTech.map(tech => 
       tech.id == id ? { ...tech, status: newStatus } : tech

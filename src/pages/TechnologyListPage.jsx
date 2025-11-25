@@ -1,23 +1,16 @@
-// src/pages/TechnologyListPage.jsx
-
 import TechnologyCard from '../components/TechnologyCard';
 import useLocalStorage from '../hooks/useLocalStorage';
-import useTechnologiesApi from '../hooks/useTechnologiesApi'; // !!! Импорт API хука
-import { useState, useEffect } from 'react'; // Нужен useEffect для синхронизации
+import useTechnologiesApi from '../hooks/useTechnologiesApi'; 
+import { useState, useEffect } from 'react'; 
 import { Link } from 'react-router-dom'; 
 
 const STORAGE_KEY = 'technology-tracker-data'; 
 
 function TechnologyListPage() {
-  
-  // 1. Используем API для ЗАГРУЗКИ начальных данных
   const { technologies: apiData, loading, error, refetch } = useTechnologiesApi();
 
-  // 2. Используем LocalStorage для УПРАВЛЕНИЯ состоянием
-  // Начальное значение будет пустым массивом, пока API не загрузит данные
   const [technologies, setTechnologies] = useLocalStorage(STORAGE_KEY, []);
   
-  // 3. Эффект: Один раз, после загрузки API-данных, синхронизируем их с LocalStorage
   useEffect(() => {
     if (apiData && technologies.length === 0) {
       setTechnologies(apiData);
@@ -25,8 +18,6 @@ function TechnologyListPage() {
   }, [apiData, setTechnologies, technologies.length]);
   
   const [newTech, setNewTech] = useState({ title: '', description: '' });
-
-  // ... (handleStatusChange и handleAddTech остаются без изменений) ...
   const handleStatusChange = (id) => {
     setTechnologies(prevTech => prevTech.map(tech => {
       if (tech.id === id) {
@@ -60,7 +51,6 @@ function TechnologyListPage() {
     setNewTech({ title: '', description: '' }); 
   };
   
-  // 4. Обработка состояний загрузки и ошибок
   if (loading) {
     return (
       <div className="loading-state">
