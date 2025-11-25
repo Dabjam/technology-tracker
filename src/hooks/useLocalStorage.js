@@ -13,15 +13,13 @@ function useLocalStorage(key, initialValue = []) {
   });
 
   useEffect(() => {
-    // Этот эффект будет выполняться при каждом изменении 'value'
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
       console.error(`Error writing key "${key}" to localStorage:`, error);
     }
-  }, [key, value]); // Зависимость от 'value'
+  }, [key, value]); 
 
-  // Возвращаем то же, что и useState: текущее значение и функцию для его обновления
   return [value, setValue];
 }
 

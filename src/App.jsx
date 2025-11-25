@@ -1,9 +1,6 @@
-// src/App.jsx
-
-import { useState } from 'react'; // useEffect больше не нужен!
+import { useState } from 'react'; 
 import './App.css';
 import TechnologyCard from './components/TechnologyCard';
-// !!! Импортируем наш новый кастомный хук
 import useLocalStorage from './hooks/useLocalStorage'; 
 
 const INITIAL_DATA = [
@@ -15,14 +12,10 @@ const STORAGE_KEY = 'technology-tracker-data';
 
 function App() {
   
-  // !!! 1. Используем кастомный хук: вся логика LocalStorage внутри него
   const [technologies, setTechnologies] = useLocalStorage(STORAGE_KEY, INITIAL_DATA);
-  // 
-
-  // 2. Состояние для формы добавления
+  
   const [newTech, setNewTech] = useState({ title: '', description: '' });
 
-  // 3. Функции обновления (используем функциональный сеттер prevTech для большей надежности)
   const handleStatusChange = (id) => {
     setTechnologies(prevTech => prevTech.map(tech => {
       if (tech.id === id) {
@@ -60,7 +53,6 @@ function App() {
     <div className="app">
       <h1>Трекер изучения технологий (Практика 21-22: Custom Hook)</h1>
       
-      {/* Форма и вывод списка - без изменений */}
       <form onSubmit={handleAddTech} className="add-form">
         <input 
           placeholder="Название технологии (обязательно)" 
