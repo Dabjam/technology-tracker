@@ -1,7 +1,5 @@
-// src/components/TechnologyCard.jsx
 import './TechnologyCard.css';
 
-// Принимаем новый проп onStatusChange
 function TechnologyCard({ title, description, status, onStatusChange }) {
   
   const getStatusClass = (status) => {
@@ -15,9 +13,8 @@ function TechnologyCard({ title, description, status, onStatusChange }) {
   return (
     <div 
       className={`technology-card ${getStatusClass(status)}`}
-      // !!! Добавляем обработчик клика, который вызывает функцию родителя
       onClick={onStatusChange} 
-      style={{ cursor: 'pointer' }} // Делаем ее кликабельной
+      style={{ cursor: 'pointer' }} 
       title="Нажмите, чтобы изменить статус"
     >
       <h3>{title}</h3>
