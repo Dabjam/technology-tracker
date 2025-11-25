@@ -39,7 +39,7 @@ function App() {
             padding: 2, // 2 * 8px = 16px
           }}
         >
-          <h1>Трекер изучения технологий (Практика 26: Material-UI)</h1>
+          <h1>Трекер изучения технологий (Практика 25-26: Material-UI)</h1>
           <Routes> 
             <Route path="/" element={<TechnologyListPage />} /> 
             <Route path="/tech/:id" element={<TechnologyDetailPage />} /> 
