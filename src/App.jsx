@@ -1,18 +1,12 @@
-// src/App.jsx
-
-import './App.css'; // Наш старый CSS нам больше не нужен, но пока оставим
+import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TechnologyListPage from './pages/TechnologyListPage';
 import TechnologyDetailPage from './pages/TechnologyDetailPage';
-
-// !!! Импортируем компоненты MUI
 import { CssBaseline, ThemeProvider, createTheme, Box } from '@mui/material';
-
-// Создаем простую тему (можно усложнить позже, например, для темной темы)
 const defaultTheme = createTheme({
   palette: {
     primary: {
-      main: '#3498db', // Наш синий цвет
+      main: '#3498db', 
     },
     secondary: {
       main: '#2ecc71',
@@ -25,12 +19,9 @@ const defaultTheme = createTheme({
 
 function App() {
   return (
-    // 1. ThemeProvider: применяет тему ко всем дочерним компонентам
     <ThemeProvider theme={defaultTheme}>
-      {/* 2. CssBaseline: сброс браузерных стилей (как normalize.css) */}
       <CssBaseline /> 
       <BrowserRouter> 
-        {/* Box - универсальный контейнер MUI, используем его для центрирования */}
         <Box 
           sx={{ 
             maxWidth: 1200, 

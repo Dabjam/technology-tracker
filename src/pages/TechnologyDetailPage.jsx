@@ -1,20 +1,13 @@
-// src/pages/TechnologyDetailPage.jsx
-
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import useLocalStorage from '../hooks/useLocalStorage';
-import { useState } from 'react'; // !!! ШАГ 1: Импортируем useState
-
-// Импортируем компоненты MUI
-import { Button, Typography, Box, Paper, Chip, TextField } from '@mui/material'; // !!! Добавляем TextField
+import { useState } from 'react'; 
+import { Button, Typography, Box, Paper, Chip, TextField } from '@mui/material'; 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function TechnologyDetailPage() {
   const { id } = useParams(); 
   const [technologies, setTechnologies] = useLocalStorage('technology-tracker-data', []);
   const technology = technologies.find(tech => tech.id == id); 
-  
-  // !!! ШАГ 2: Состояние для заметок
-  // Инициализируем заметки значением, которое уже есть в технологии, или пустой строкой
   const [notes, setNotes] = useState(technology?.notes || ''); 
 
   if (!technology) {
@@ -34,12 +27,7 @@ function TechnologyDetailPage() {
     ));
   };
   
-  // !!! ШАГ 3: Функция для сохранения заметок в LocalStorage
   const saveNotes = (newNotes) => {
-    // 1. Обновляем локальное состояние заметок (хотя в данном случае это уже сделано onChange)
-    // setNotes(newNotes); 
-    
-    // 2. Обновляем состояние технологий, включая новые заметки, чтобы useLocalStorage их сохранил
     setTechnologies(prevTech => prevTech.map(tech => 
       tech.id == id ? { ...tech, notes: newNotes } : tech
     ));
@@ -108,8 +96,6 @@ function TechnologyDetailPage() {
             </Button>
           </Box>
         </Box>
-
-        {/* !!! ШАГ 4: Секция для заметок (JSX) !!! */}
         <Box sx={{ my: 4 }}>
           <Typography variant="h5" component="h2" gutterBottom>Мои заметки</Typography>
           <TextField
@@ -119,8 +105,7 @@ function TechnologyDetailPage() {
             fullWidth
             variant="outlined"
             value={notes}
-            onChange={(e) => setNotes(e.target.value)} // Обновляем локальное состояние при каждом вводе
-            // Сохраняем в LocalStorage при потере фокуса (когда пользователь закончил ввод)
+            onChange={(e) => setNotes(e.target.value)} 
             onBlur={(e) => saveNotes(e.target.value)} 
           />
         </Box>
