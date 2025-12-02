@@ -1,22 +1,64 @@
-:root {
-  --primary-color: #3498db;
-  --text-color: #333;
-  --background-color: #f4f7f6;
-}
+/* src/index.css */
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+/* --- 1. Сброс и Базовые настройки --- */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  line-height: 1.6;
+  /* Эти настройки управляют шрифтами, которые не переопределены MUI Theme */
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Цвет фона управляется MUI ThemeProvider */
 }
 
-#root {
-  min-height: 100vh; 
+/* Установка минимальной высоты для всего приложения, чтобы фон темы покрывал всю страницу */
+.app-container {
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* --- 2. Глобальные/Вспомогательные классы --- */
+
+/* Классы для состояний, которые не являются частью MUI */
+.loading-state, .error-state {
+  padding: 40px;
+  text-align: center;
+  font-size: 1.2em;
+  color: #909090;
+}
+
+.error-state {
+    color: #e57373; /* Цвет ошибки */
+    font-weight: bold;
+}
+
+/* Сообщение об отсутствии результатов поиска */
+.no-results {
+  text-align: center;
+  margin-top: 30px;
+  color: #757575;
+}
+
+/* --- 3. Навигация и Ссылки (для интеграции с react-router-dom) --- */
+
+/* Сброс стандартного стиля ссылок, чтобы они выглядели как Tab-ы MUI */
+.MuiTabs-root a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* --- 4. Общие отступы (могут быть заменены на MUI sx={...}) --- */
+
+/* Эти классы используются для разделения основных секций, если не используется Grid/Box MUI */
+.main-content {
+  padding: 20px;
+}
+
+.controls-section {
+  margin-bottom: 30px;
 }
