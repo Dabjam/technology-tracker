@@ -1,81 +1,115 @@
-import { useState } from 'react'; 
-import './App.css';
+import React, { useState, useMemo } from 'react';
 import TechnologyCard from './components/TechnologyCard';
+import QuickActions from './components/QuickActions';
+import FilterControls from './components/FilterControls';
+import { INITIAL_DATA } from './data/initialData';
 
 function App() {
-  const [technologies, setTechnologies] = useState([
-    { id: 1, title: 'HTML & CSS Basics', description: 'Основы разметки и стилизации', status: 'completed' },
-    { id: 2, title: 'JavaScript ES6+', description: 'Современный синтаксис JS', status: 'in-progress' },
-    { id: 3, title: 'React Hooks (useState)', description: 'Изучение состояния компонентов', status: 'not-started' },
-  ]);
+    // 1. Состояние для списка технологий
+    const [technologies, setTechnologies] = useState(INITIAL_DATA);
+    // 2. Состояние для активного фильтра
+    const [activeFilter, setActiveFilter] = useState('all');
 
-  const [newTech, setNewTech] = useState({ title: '', description: '' });
+    // --- Расчет Прогресс-бара ---
+    const completedCount = technologies.filter(tech => tech.status === 'completed').length;
+    const totalCount = technologies.length;
+    const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-  const handleStatusChange = (id) => {
-    setTechnologies(technologies.map(tech => {
-      if (tech.id === id) {
-        let nextStatus;
-        if (tech.status === 'not-started') {
-          nextStatus = 'in-progress';
-        } else if (tech.status === 'in-progress') {
-          nextStatus = 'completed';
-        } else {
-          nextStatus = 'not-started';
+    // --- Логика Практики 20: Переключение статуса по клику ---
+    const toggleTechnologyStatus = (techId) => {
+        setTechnologies(prevTech => 
+            prevTech.map(tech => {
+                if (tech.id === techId) {
+                    let newStatus = '';
+                    if (tech.status === 'not-started') newStatus = 'in-progress';
+                    else if (tech.status === 'in-progress') newStatus = 'completed';
+                    else newStatus = 'not-started';
+                    return { ...tech, status: newStatus };
+                }
+                return tech;
+            })
+        );
+    };
+
+    // --- Логика Задания 1: Быстрые действия ---
+    const markAllCompleted = () => { 
+        setTechnologies(prevTech => prevTech.map(tech => ({ ...tech, status: 'completed' })));
+    };
+
+    const resetAllStatuses = () => { 
+        setTechnologies(prevTech => prevTech.map(tech => ({ ...tech, status: 'not-started' })));
+    };
+
+    const selectRandomNext = () => { 
+        const notCompleted = technologies.filter(tech => tech.status !== 'completed');
+        if (notCompleted.length === 0) {
+            alert('Все технологии изучены! Вы великолепны!');
+            return;
         }
-        return { ...tech, status: nextStatus };
-      }
-      return tech; 
-    }));
-  };
+        const randomIndex = Math.floor(Math.random() * notCompleted.length);
+        const randomTech = notCompleted[randomIndex];
+        alert(`Ваша следующая цель: ${randomTech.title}!`);
+    };
 
-  const handleAddTech = (e) => {
-    e.preventDefault(); 
-    if (!newTech.title) return; 
+    // --- Логика Задания 2: Фильтрация ---
+    const handleFilterChange = (filterValue) => {
+        setActiveFilter(filterValue);
+    };
 
-    setTechnologies([
-      { 
-        id: Date.now(), 
-        title: newTech.title, 
-        description: newTech.description, 
-        status: 'not-started' 
-      },
-      ...technologies, 
-    ]);
-    
-    setNewTech({ title: '', description: '' }); 
-  };
+    const filteredTechnologies = useMemo(() => { 
+        if (activeFilter === 'all') {
+            return technologies;
+        }
+        return technologies.filter(tech => tech.status === activeFilter);
+    }, [technologies, activeFilter]); 
 
-  return (
-    <div className="app">
-      <h1>Трекер изучения технологий (Практика 20: useState)</h1>
-      
-      <form onSubmit={handleAddTech} className="add-form">
-        <input 
-          placeholder="Название технологии (обязательно)" 
-          value={newTech.title}
-          onChange={e => setNewTech({...newTech, title: e.target.value})}
-        />
-        <input 
-          placeholder="Краткое описание" 
-          value={newTech.description}
-          onChange={e => setNewTech({...newTech, description: e.target.value})}
-        />
-        <button type="submit">➕ Добавить</button>
-      </form>
-      
-      <div className="card-list">
-        {technologies.map((tech) => (
-          <TechnologyCard 
-            key={tech.id} 
-            title={tech.title} 
-            description={tech.description} 
-            status={tech.status} 
-            onStatusChange={() => handleStatusChange(tech.id)} 
-          />
-        ))}
-      </div>
-    </div>
-  );
+    // --- РЕНДЕР ---
+    return (
+        <div className="app-container">
+            <header className="app-header">
+                <h1>Практика 20: Трекер изучения технологий</h1>
+                
+                <div className="progress-bar-container">
+                    <div 
+                        className="progress-bar" 
+                        style={{ width: `${progressPercentage}%` }}
+                    >
+                        {progressPercentage.toFixed(0)}%
+                    </div> 
+                </div>
+            </header>
+            
+            <main className="main-content">
+                <section className="controls-section">
+                    <QuickActions 
+                        onMarkAllCompleted={markAllCompleted}
+                        onResetAllStatuses={resetAllStatuses}
+                        onSelectRandom={selectRandomNext}
+                    />
+                    <FilterControls 
+                        activeFilter={activeFilter}
+                        onFilterChange={handleFilterChange}
+                    />
+                </section>
+
+                <section className="technology-list-section">
+                    <h2 className="section-title">Список технологий ({filteredTechnologies.length})</h2>
+                    <div className="technology-list">
+                        {filteredTechnologies.map(tech => (
+                            <TechnologyCard 
+                                key={tech.id} 
+                                tech={tech} 
+                                onToggleStatus={toggleTechnologyStatus} 
+                            />
+                        ))}
+                    </div>
+                    {filteredTechnologies.length === 0 && activeFilter !== 'all' && (
+                        <p>Нет технологий со статусом "{activeFilter}"</p>
+                    )}
+                </section>
+            </main>
+        </div>
+    );
 }
 
 export default App;
