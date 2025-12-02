@@ -1,3 +1,5 @@
+// src/App.jsx (Практика 20: Финальная версия)
+
 import React, { useState, useMemo } from 'react';
 import TechnologyCard from './components/TechnologyCard';
 import QuickActions from './components/QuickActions';
@@ -15,12 +17,13 @@ function App() {
     const totalCount = technologies.length;
     const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-    // --- Логика Практики 20: Переключение статуса по клику ---
+    // --- Логика переключения статуса по клику ---
     const toggleTechnologyStatus = (techId) => {
         setTechnologies(prevTech => 
             prevTech.map(tech => {
                 if (tech.id === techId) {
                     let newStatus = '';
+                    // Циклическое переключение статусов: Not Started -> In Progress -> Completed -> Not Started
                     if (tech.status === 'not-started') newStatus = 'in-progress';
                     else if (tech.status === 'in-progress') newStatus = 'completed';
                     else newStatus = 'not-started';
@@ -31,7 +34,7 @@ function App() {
         );
     };
 
-    // --- Логика Задания 1: Быстрые действия ---
+    // --- Логика Быстрых действий ---
     const markAllCompleted = () => { 
         setTechnologies(prevTech => prevTech.map(tech => ({ ...tech, status: 'completed' })));
     };
@@ -51,7 +54,7 @@ function App() {
         alert(`Ваша следующая цель: ${randomTech.title}!`);
     };
 
-    // --- Логика Задания 2: Фильтрация ---
+    // --- Логика Фильтрации ---
     const handleFilterChange = (filterValue) => {
         setActiveFilter(filterValue);
     };
@@ -60,6 +63,7 @@ function App() {
         if (activeFilter === 'all') {
             return technologies;
         }
+        // Фильтрация по выбранному статусу
         return technologies.filter(tech => tech.status === activeFilter);
     }, [technologies, activeFilter]); 
 
@@ -74,6 +78,7 @@ function App() {
                         className="progress-bar" 
                         style={{ width: `${progressPercentage}%` }}
                     >
+                        {/* Отображение процентов выполнения */}
                         {progressPercentage.toFixed(0)}%
                     </div> 
                 </div>
@@ -103,6 +108,7 @@ function App() {
                             />
                         ))}
                     </div>
+                     {/* Сообщение, если фильтр не дал результатов */}
                     {filteredTechnologies.length === 0 && activeFilter !== 'all' && (
                         <p>Нет технологий со статусом "{activeFilter}"</p>
                     )}
