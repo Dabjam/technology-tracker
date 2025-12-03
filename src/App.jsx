@@ -1,5 +1,3 @@
-// src/App.jsx (Практика 20: Финальная версия)
-
 import React, { useState, useMemo } from 'react';
 import TechnologyCard from './components/TechnologyCard';
 import QuickActions from './components/QuickActions';
@@ -7,12 +5,9 @@ import FilterControls from './components/FilterControls';
 import { INITIAL_DATA } from './data/initialData';
 
 function App() {
-    // 1. Состояние для списка технологий
     const [technologies, setTechnologies] = useState(INITIAL_DATA);
-    // 2. Состояние для активного фильтра
     const [activeFilter, setActiveFilter] = useState('all');
 
-    // --- Расчет Прогресс-бара ---
     const completedCount = technologies.filter(tech => tech.status === 'completed').length;
     const totalCount = technologies.length;
     const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
