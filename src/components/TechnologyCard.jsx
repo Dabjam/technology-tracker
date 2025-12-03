@@ -1,5 +1,3 @@
-// src/components/TechnologyCard.jsx
-
 import React from 'react';
 import { Card, CardContent, Typography, Chip, Box, Checkbox } from '@mui/material';
 
