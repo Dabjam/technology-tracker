@@ -1,12 +1,9 @@
-/* Основные стили */
 .app-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
 }
-
-/* Стили для ProgressHeader (Самостоятельная работа) */
 .progress-header {
   margin-bottom: 25px;
   padding: 15px;
@@ -28,7 +25,6 @@
   font-size: 1em;
 }
 
-/* Прогресс-бар */
 .progress-bar-container {
   height: 20px;
   background-color: #e9ecef;
@@ -38,7 +34,7 @@
 
 .progress-bar-fill {
   height: 100%;
-  background-color: #28a745; /* Зеленый цвет */
+  background-color: #28a745; 
   transition: width 0.4s ease;
   display: flex;
   align-items: center;
@@ -50,7 +46,6 @@
   box-sizing: border-box;
 }
 
-/* Стили для карточек технологий */
 .tech-card {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -58,7 +53,7 @@
   margin-bottom: 15px;
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  cursor: pointer; /* Для обозначения, что элемент кликабелен */
+  cursor: pointer; 
   transition: transform 0.1s, box-shadow 0.1s;
 }
 

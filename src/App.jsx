@@ -14,13 +14,13 @@ function App() {
       id: 2,
       title: 'JavaScript ES6+',
       description: 'Освоение современных возможностей JS: стрелочные функции, промисы, асинхронность.',
-      status: 'В процессе' // В процессе
+      status: 'В процессе' 
     },
     {
       id: 3,
       title: 'React Components',
       description: 'Создание функциональных компонентов и работа с props.',
-      status: 'Не начато' // Не начато
+      status: 'Не начато' 
     },
     {
       id: 4,
