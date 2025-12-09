@@ -1,11 +1,10 @@
-/* --- Общие стили и сброс --- */
 :root {
-    --color-primary: #4a90e2; /* Синий для активных элементов */
-    --color-success: #50e3c2; /* Зеленый для выполненных */
-    --color-warning: #f5a623; /* Желтый для в процессе */
-    --color-danger: #d0021b; /* Красный для не начатых */
-    --color-bg: #f4f7f6; /* Светлый фон */
-    --color-card-bg: #ffffff; /* Фон карточек */
+    --color-primary: #4a90e2; 
+    --color-success: #50e3c2; 
+    --color-warning: #f5a623; 
+    --color-danger: #d0021b; 
+    --color-bg: #f4f7f6; 
+    --color-card-bg: #ffffff; 
     --color-text: #333333;
     --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-deep: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -24,7 +23,6 @@ body {
     padding: 20px;
 }
 
-/* --- Основной контейнер приложения и Заголовок --- */
 .app-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -54,50 +52,59 @@ body {
     padding-bottom: 5px;
 }
 
-/* --- Стили Прогресс-бара --- */
 .progress-bar-container {
-    height: 10px;
+    height: 20px;
     background-color: #e0e0e0;
     border-radius: 5px;
     overflow: hidden;
 }
 
 .progress-bar {
+    display: relative;
     height: 100%;
     text-align: right;
     background-color: var(--color-success);
     transition: width 0.5s ease-in-out;
     color: white; 
-    font-size: 8px; 
+    font-size: 12px;
+    font-weight: bold; 
     line-height: 10px; 
+    padding-top: 4px;
     padding-right: 5px; 
+    padding-bottom: 4px;
 }
 
-/* --- Секция Контролов (Быстрые действия + Фильтры + Поиск) --- */
 .controls-section {
     display: flex;
     gap: 30px;
     margin-bottom: 30px;
 }
-
-.filter-and-search {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Общие стили для контейнеров контролов */
 .quick-actions-container,
-.filter-controls-container {
+.filter-controls-container,
+.search-controls-container { 
     background: var(--color-card-bg);
     padding: 20px;
     border-radius: 12px;
     box-shadow: var(--shadow-light);
     flex: 1;
+    min-width: 300px; 
 }
 
-/* --- Стили Кнопок (Общие) --- */
+.search-input {
+    padding: 12px 15px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
 .action-buttons-group,
 .filter-buttons-group {
     display: flex;
@@ -121,13 +128,10 @@ body {
     box-shadow: var(--shadow-light);
 }
 
-/* Кнопки Быстрых Действий (Цвета) */
 .btn-success { background-color: var(--color-success); color: var(--color-text); }
 .btn-warning { background-color: var(--color-warning); color: var(--color-text); }
-.btn-info { background-color: var(--color-primary); color: white; } /* Для "Случайный выбор" в Пр. 20 */
-.btn-primary { background-color: var(--color-primary); color: white; } /* Для "Экспорт данных" */
+.btn-info { background-color: var(--color-primary); color: white; }
 
-/* Кнопки Фильтрации */
 .filter-btn {
     background-color: #e0e0e0;
     color: var(--color-text);
@@ -139,43 +143,6 @@ body {
     box-shadow: 0 0 0 3px var(--color-primary), var(--shadow-deep);
 }
 
-/* --- Стили Поиска (SearchInput) --- */
-.search-input-container {
-    background: var(--color-card-bg);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-light);
-}
-
-.search-input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.2s;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-}
-
-.search-results-count {
-    font-size: 13px;
-    color: #888;
-    margin-top: 10px;
-}
-
-.no-results {
-    text-align: center;
-    padding: 20px;
-    color: #888;
-    font-style: italic;
-}
-
-/* --- Стили для Списка и Карточек --- */
 .technology-list-section {
     background: var(--color-card-bg);
     padding: 20px;
@@ -195,15 +162,20 @@ body {
     border-radius: 10px;
     padding: 20px;
     box-shadow: var(--shadow-light);
-    cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    border-left: 5px solid transparent; /* Для индикатора статуса */
+    border-left: 5px solid transparent; 
 }
 
 .tech-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
+
+.tech-card > div:first-child { 
+    margin-bottom: 10px; 
+    cursor: pointer; 
+}
+
 
 .card-title {
     font-size: 18px;
@@ -219,6 +191,13 @@ body {
     letter-spacing: 0.5px;
 }
 
+.card-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
 .card-status {
     font-size: 14px;
     font-weight: 600;
@@ -227,7 +206,12 @@ body {
     display: inline-block;
 }
 
-/* Индикаторы статусов */
+
+.tech-notes textarea {
+    
+    background-color: var(--color-bg);
+}
+
 .status-not-started { border-left-color: var(--color-danger); }
 .status-not-started .card-status { background-color: #ffeaea; color: var(--color-danger); }
 
@@ -236,3 +220,148 @@ body {
 
 .status-completed { border-left-color: var(--color-success); }
 .status-completed .card-status { background-color: #e6fff7; color: #1e876a; }
+
+
+@media (max-width: 900px) {
+    .controls-section {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .quick-actions-container,
+    .filter-controls-container,
+    .search-controls-container {
+        flex: none; 
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+}
+
+.modal-content {
+    background: var(--color-card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow-deep);
+    padding: 25px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-header h2 {
+    color: var(--color-primary);
+    font-size: 22px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--color-text);
+    padding: 5px;
+}
+
+.modal-body {
+    overflow-y: auto; 
+    flex-grow: 1;
+}
+
+.modal-description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.modal-category {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.modal-status-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    min-height: 150px;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background-color: var(--color-bg); 
+}
+
+.modal-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.modal-footer {
+    padding-top: 15px;
+    text-align: right;
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+}
+
+.controls-section {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    flex-wrap: wrap; 
+}
+.quick-actions-container,
+.filter-controls-container,
+.search-controls-container,
+.export-actions-container { 
+    background: var(--color-card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    flex: 1;
+    min-width: 300px; 
+}
+
+@media (max-width: 900px) {
+    .controls-section {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .quick-actions-container,
+    .filter-controls-container,
+    .search-controls-container,
+    .export-actions-container { 
+        flex: none; 
+        width: 100%;
+        min-width: unset;
+    }
+}
