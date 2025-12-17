@@ -1,11 +1,13 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import useTechnologiesApi from '../hooks/useTechnologiesApi';
+import ResourceLoader from '../components/ResourceLoader';
 
 function TechnologyDetail() {
     const { techId } = useParams();
     const navigate = useNavigate();
     const { technologies, loading, error, updateTechnology, deleteTechnology } = useTechnologiesApi();
+    const [showResourceLoader, setShowResourceLoader] = useState(false);
 
     const technology = useMemo(() => {
         return technologies.find(t => t.id === parseInt(techId));
@@ -28,6 +30,29 @@ function TechnologyDetail() {
             deleteTechnology(technology.id);
             navigate('/technologies');
         }
+    };
+
+    const handleResourceSelect = (resource) => {
+        if (technology) {
+            const currentResources = technology.resources || [];
+            
+            const isAlreadyAdded = currentResources.some(
+                existing => existing === resource.url || existing.url === resource.url
+            );
+            
+            if (!isAlreadyAdded) {
+                const newResources = [...currentResources, resource];
+                updateTechnology(technology.id, { resources: newResources });
+                
+                alert(`✅ Ресурс "${resource.title}" добавлен!`);
+            } else {
+                alert('⚠️ Этот ресурс уже добавлен');
+            }
+        }
+    };
+
+    const toggleResourceLoader = () => {
+        setShowResourceLoader(!showResourceLoader);
     };
 
     if (loading) return <div className="loading-state">Загрузка...</div>;
@@ -53,6 +78,39 @@ function TechnologyDetail() {
             className += ` active-status active-status-${status}`;
         }
         return className;
+    };
+
+    // Форматирование ресурсов
+    const formatResource = (resource, index) => {
+        if (typeof resource === 'object') {
+            return (
+                <li key={index}>
+                    <a 
+                        href={resource.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <span style={{ fontSize: '16px' }}>
+                            {resource.type === 'documentation' ? '📚' :
+                             resource.type === 'github' ? '🐙' :
+                             resource.type === 'tutorial' ? '🎓' : '🔗'}
+                        </span>
+                        <span>
+                            <strong>{resource.title}</strong> - {resource.url}
+                        </span>
+                    </a>
+                </li>
+            );
+        }
+        
+        return (
+            <li key={index}>
+                <a href={resource} target="_blank" rel="noopener noreferrer">
+                    🔗 {resource}
+                </a>
+            </li>
+        );
     };
 
     return (
@@ -125,19 +183,61 @@ function TechnologyDetail() {
             </div>
 
             <div className="detail-section">
-                <h3>🔗 Дополнительные ресурсы</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                    <h3>🔗 Дополнительные ресурсы</h3>
+                    <button 
+                        onClick={toggleResourceLoader}
+                        className="btn btn-primary"
+                        style={{ padding: '8px 15px', fontSize: '14px' }}
+                    >
+                        {showResourceLoader ? '✕ Скрыть загрузчик' : '🌐 Загрузить из API'}
+                    </button>
+                </div>
+                
+                {/* Компонент загрузки ресурсов из API */}
+                {showResourceLoader && (
+                    <div style={{ marginBottom: '20px' }}>
+                        <ResourceLoader 
+                            techName={technology.title}
+                            onResourceSelect={handleResourceSelect}
+                            existingResources={technology.resources || []}
+                        />
+                    </div>
+                )}
+                
                 {technology.resources && technology.resources.length > 0 ? (
-                    <ul className="resource-list">
-                        {technology.resources.map((res, index) => (
-                            <li key={index}>
-                                <a href={res} target="_blank" rel="noopener noreferrer">
-                                    🔗 {res}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
+                    <div>
+                        <ul className="resource-list" style={{ 
+                            maxHeight: '300px', 
+                            overflowY: 'auto',
+                            padding: '15px',
+                            backgroundColor: 'rgba(0,0,0,0.02)',
+                            borderRadius: '8px',
+                            border: '1px solid var(--border-color)'
+                        }}>
+                            {technology.resources.map((res, index) => formatResource(res, index))}
+                        </ul>
+                        <p style={{ 
+                            marginTop: '10px', 
+                            fontSize: '12px', 
+                            color: 'var(--color-subtext)' 
+                        }}>
+                            Всего ресурсов: {technology.resources.length}
+                        </p>
+                    </div>
                 ) : (
-                    <p style={{ color: 'var(--color-subtext)' }}>Ресурсы еще не добавлены.</p>
+                    <div style={{ 
+                        padding: '20px', 
+                        textAlign: 'center', 
+                        border: '2px dashed var(--border-color)', 
+                        borderRadius: '8px',
+                        backgroundColor: 'rgba(0,0,0,0.02)'
+                    }}>
+                        <p style={{ color: 'var(--color-subtext)' }}>Ресурсы еще не добавлены.</p>
+                        <p style={{ color: 'var(--color-subtext)', fontSize: '14px', marginTop: '10px' }}>
+                            Используйте кнопку "Загрузить из API" выше, чтобы найти полезные материалы
+                        </p>
+                    </div>
                 )}
             </div>
 
@@ -167,4 +267,4 @@ function TechnologyDetail() {
     );
 }
 
-export default TechnologyDetail;
+export default TechnologyDetail;    

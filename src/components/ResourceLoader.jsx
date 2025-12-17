@@ -1,5 +1,3 @@
-// src/components/ResourceLoader.jsx
-
 import React, { useState, useCallback } from 'react';
 import useTechResourcesApi from '../hooks/useTechResourcesApi';
 
@@ -8,8 +6,8 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
     const { resources, loading, error, fetchResources, resetResources } = useTechResourcesApi();
     
     const handleLoadResources = useCallback(async () => {
-        if (!techName) {
-            alert('Укажите название технологии для поиска ресурсов');
+        if (!techName || techName.trim() === '') {
+            alert('Введите название технологии для поиска ресурсов');
             return;
         }
         
@@ -18,16 +16,15 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
     }, [techName, fetchResources]);
     
     const handleResourceSelect = (resource) => {
-        // Проверяем, не добавлен ли уже этот ресурс
         const isAlreadyAdded = existingResources.some(
             existing => existing.url === resource.url || existing === resource.url
         );
         
         if (!isAlreadyAdded) {
             onResourceSelect(resource);
-            alert(`Ресурс "${resource.title}" добавлен!`);
+            alert(`✅ Ресурс "${resource.title}" добавлен!`);
         } else {
-            alert('Этот ресурс уже добавлен');
+            alert('⚠️ Этот ресурс уже добавлен');
         }
     };
     
@@ -36,7 +33,7 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
         resetResources();
     };
     
-    // Определяем иконки по типу ресурса
+    // Иконки по типу ресурса
     const getResourceIcon = (type) => {
         switch(type) {
             case 'documentation': return '📚';
@@ -48,7 +45,6 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
             case 'package-manager': return '📦';
             case 'registry': return '🏢';
             case 'cloud': return '☁️';
-            case 'search': return '🔍';
             default: return '🔗';
         }
     };
@@ -76,7 +72,7 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
                         Загрузка ресурсов...
                     </>
                 ) : (
-                    '🌐 Загрузить дополнительные ресурсы из API'
+                    '🌐 Загрузить ресурсы из API'
                 )}
             </button>
             
@@ -87,7 +83,8 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
                     borderLeft: '3px solid var(--color-danger)',
                     padding: '10px',
                     borderRadius: '4px',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    color: 'var(--color-danger)'
                 }}>
                     ❌ {error}
                 </div>
@@ -100,7 +97,8 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
                     borderRadius: '8px',
                     padding: '15px',
                     maxHeight: '300px',
-                    overflowY: 'auto'
+                    overflowY: 'auto',
+                    backgroundColor: 'var(--color-card-bg)'
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                         <h4 style={{ fontSize: '16px', color: 'var(--color-text)' }}>
@@ -149,8 +147,7 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
                                         color: 'var(--color-subtext)',
                                         marginBottom: '10px',
                                         overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap'
+                                        textOverflow: 'ellipsis'
                                     }}>
                                         {resource.url}
                                     </div>
@@ -187,18 +184,6 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
                             );
                         })}
                     </div>
-                    
-                    <div style={{ 
-                        marginTop: '15px',
-                        padding: '10px',
-                        backgroundColor: 'rgba(90, 125, 255, 0.05)',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        color: 'var(--color-subtext)'
-                    }}>
-                        <strong>ℹ️ Информация:</strong> Эти ресурсы загружаются из мокового API. 
-                        В реальном проекте подключите реальный API документации.
-                    </div>
                 </div>
             )}
             
@@ -208,7 +193,8 @@ const ResourceLoader = ({ techName, onResourceSelect, existingResources = [] }) 
                     padding: '20px',
                     textAlign: 'center',
                     border: '1px dashed var(--border-color)',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--color-card-bg)'
                 }}>
                     <p>Ресурсы не найдены для "{techName}"</p>
                     <button 

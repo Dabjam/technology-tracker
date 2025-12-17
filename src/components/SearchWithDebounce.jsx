@@ -1,30 +1,27 @@
-// src/components/SearchWithDebounce.jsx
-
 import React, { useState, useCallback, useMemo } from 'react';
 import useDebounce from '../hooks/useDebounce';
 
-function SearchWithDebounce({ onSearchChange, resultsCount, totalCount }) {
+const SearchWithDebounce = ({ onSearchChange, resultsCount, totalCount }) => {
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     
-    // Используем кастомный хук Debounce с задержкой 500мс
+    // Используем debounce с задержкой 500мс
     const debouncedSearchTerm = useDebounce(inputValue, 500);
     
-    // Кэшированный обработчик для оптимизации
     const handleInputChange = useCallback((e) => {
         const value = e.target.value;
         setInputValue(value);
         setIsTyping(true);
     }, []);
     
-    // Эффект для отслеживания завершения ввода
+    // Отслеживаем завершение ввода
     React.useEffect(() => {
         if (inputValue) {
             setIsTyping(inputValue !== debouncedSearchTerm);
         }
     }, [inputValue, debouncedSearchTerm]);
     
-    // Эффект, который вызывает функцию поиска только после задержки
+    // Вызываем поиск после debounce
     React.useEffect(() => {
         onSearchChange(debouncedSearchTerm);
         if (debouncedSearchTerm === inputValue) {
@@ -32,7 +29,7 @@ function SearchWithDebounce({ onSearchChange, resultsCount, totalCount }) {
         }
     }, [debouncedSearchTerm, onSearchChange, inputValue]);
 
-    // Мемоизированная статистика поиска
+    // Статистика поиска
     const searchStats = useMemo(() => {
         const hasResults = resultsCount > 0;
         const allResults = resultsCount === totalCount;
@@ -62,7 +59,7 @@ function SearchWithDebounce({ onSearchChange, resultsCount, totalCount }) {
         <div className="search-controls-container">
             <h3 className="section-title">🔍 Поиск технологий (Debounce 500ms)</h3>
             
-            <div className="search-input-wrapper">
+            <div className="search-input-wrapper" style={{ position: 'relative' }}>
                 <input
                     type="text"
                     placeholder="Искать по названию, описанию или заметкам..."
@@ -72,10 +69,12 @@ function SearchWithDebounce({ onSearchChange, resultsCount, totalCount }) {
                     style={{
                         width: '100%',
                         padding: '12px 15px',
-                        border: '1px solid #ddd',
+                        border: '1px solid var(--border-color)',
                         borderRadius: '8px',
                         fontSize: '16px',
-                        transition: 'border-color 0.3s, box-shadow 0.3s'
+                        transition: 'border-color 0.3s, box-shadow 0.3s',
+                        backgroundColor: 'var(--color-card-bg)',
+                        color: 'var(--color-text)'
                     }}
                 />
                 
@@ -85,7 +84,7 @@ function SearchWithDebounce({ onSearchChange, resultsCount, totalCount }) {
                         right: '15px',
                         top: '50%',
                         transform: 'translateY(-50%)',
-                        color: '#999',
+                        color: 'var(--color-subtext)',
                         fontSize: '12px'
                     }}>
                         Ввод...
@@ -97,7 +96,7 @@ function SearchWithDebounce({ onSearchChange, resultsCount, totalCount }) {
                 <p style={{ 
                     fontSize: '14px', 
                     color: searchStats.isEmpty ? 'var(--color-danger)' : 
-                           searchStats.allResults ? 'var(--color-success)' : '#666',
+                           searchStats.allResults ? 'var(--color-success)' : 'var(--color-subtext)',
                     fontWeight: searchStats.isEmpty ? 'bold' : 'normal'
                 }}>
                     {searchStats.message}
@@ -119,6 +118,6 @@ function SearchWithDebounce({ onSearchChange, resultsCount, totalCount }) {
             </div>
         </div>
     );
-}
+};
 
 export default React.memo(SearchWithDebounce);

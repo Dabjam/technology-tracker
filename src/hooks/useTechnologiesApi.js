@@ -1,190 +1,117 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 
-const LOCAL_STORAGE_KEY = 'techTrackerData'; 
+// Моковый API для демонстрации
+const MOCK_RESOURCES_API = {
+    'React': [
+        { title: 'Официальная документация', url: 'https://react.dev', type: 'documentation' },
+        { title: 'React на GitHub', url: 'https://github.com/facebook/react', type: 'github' },
+        { title: 'React Tutorial', url: 'https://react-tutorial.app', type: 'tutorial' }
+    ],
+    'Node.js': [
+        { title: 'Официальный сайт', url: 'https://nodejs.org', type: 'documentation' },
+        { title: 'Node.js API Docs', url: 'https://nodejs.org/api/', type: 'api' },
+        { title: 'npm', url: 'https://www.npmjs.com', type: 'package-manager' }
+    ],
+    'TypeScript': [
+        { title: 'TypeScript Handbook', url: 'https://www.typescriptlang.org/docs/', type: 'documentation' },
+        { title: 'Playground', url: 'https://www.typescriptlang.org/play', type: 'sandbox' }
+    ],
+    'Docker': [
+        { title: 'Docker Docs', url: 'https://docs.docker.com', type: 'documentation' },
+        { title: 'Docker Hub', url: 'https://hub.docker.com', type: 'registry' }
+    ],
+    'GraphQL': [
+        { title: 'GraphQL.org', url: 'https://graphql.org', type: 'documentation' },
+        { title: 'GraphQL Playground', url: 'https://graphql.org/playground/', type: 'sandbox' }
+    ],
+    'MongoDB': [
+        { title: 'MongoDB Docs', url: 'https://docs.mongodb.com', type: 'documentation' },
+        { title: 'MongoDB Atlas', url: 'https://www.mongodb.com/cloud/atlas', type: 'cloud' }
+    ]
+};
 
-const mockTechnologies = [
-    { id: 1, title: 'React', description: 'Библиотека для создания пользовательских интерфейсов', category: 'frontend', difficulty: 'beginner', resources: ['https://react.dev'], status: 'completed', notes: 'Освоены хуки.' },
-    { id: 2, title: 'Node.js', description: 'Среда выполнения JavaScript на сервере', category: 'backend', difficulty: 'intermediate', resources: ['https://nodejs.org'], status: 'in-progress', notes: 'Нужно разобраться с Express.' },
-    { id: 3, title: 'TypeScript', description: 'Типизированное надмножество JavaScript', category: 'language', difficulty: 'intermediate', resources: ['https://www.typescriptlang.org'], status: 'not-started', notes: '' }
-];
+// Функция для поиска ресурсов
+const findResourcesInMockApi = (techName) => {
+    if (!techName || techName.trim() === '') return [];
+    
+    const normalizedTechName = techName.toLowerCase();
+    
+    // Ищем точное совпадение
+    for (const [key, resources] of Object.entries(MOCK_RESOURCES_API)) {
+        if (key.toLowerCase() === normalizedTechName) {
+            return resources;
+        }
+    }
+    
+    // Ищем частичное совпадение
+    for (const [key, resources] of Object.entries(MOCK_RESOURCES_API)) {
+        if (key.toLowerCase().includes(normalizedTechName) || 
+            normalizedTechName.includes(key.toLowerCase())) {
+            return resources;
+        }
+    }
+    
+    // Общие ресурсы
+    return [
+        { title: 'MDN Web Docs', url: 'https://developer.mozilla.org', type: 'documentation' },
+        { title: 'Stack Overflow', url: 'https://stackoverflow.com', type: 'qna' },
+        { title: 'GitHub', url: 'https://github.com', type: 'github' }
+    ];
+};
 
-function useTechnologiesApi() {
-    const [technologies, setTechnologies] = useState([]);
-    const [loading, setLoading] = useState(true);
+const useTechResourcesApi = () => {
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [resources, setResources] = useState([]);
 
-    const generateId = useCallback(() => {
-        return Date.now() + Math.floor(Math.random() * 1000);
-    }, []);
-
-    const fetchTechnologies = useCallback(async () => {
+    // Загрузка ресурсов по названию технологии
+    const fetchResources = useCallback(async (techName) => {
+        if (!techName || techName.trim() === '') {
+            setError('Введите название технологии');
+            return [];
+        }
+        
         setLoading(true);
         setError(null);
         
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Имитация задержки сети
+            await new Promise(resolve => setTimeout(resolve, 800));
             
-            const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            const wasCleared = localStorage.getItem('dataCleared');
+            // Используем моковый API
+            const mockResources = findResourcesInMockApi(techName);
             
-            if (storedData && storedData !== '[]' && !wasCleared) {
-                const initialData = JSON.parse(storedData);
-                const validatedData = initialData.map(tech => ({
-                    ...tech,
-                    id: Number(tech.id) || generateId()
-                }));
-                setTechnologies(validatedData);
-            } else if (!wasCleared) {
-                setTechnologies([]);
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([]));
+            if (mockResources.length === 0) {
+                setError(`Ресурсы для "${techName}" не найдены`);
             } else {
-                setTechnologies([]);
+                setResources(mockResources);
             }
             
+            return mockResources;
+            
         } catch (err) {
-            console.error('Ошибка загрузки данных:', err);
-            setError('Не удалось загрузить данные.');
-            setTechnologies([]);
+            const errorMsg = `Ошибка загрузки: ${err.message}`;
+            setError(errorMsg);
+            console.error('Error fetching resources:', err);
+            return [];
         } finally {
             setLoading(false);
         }
-    }, [generateId]);
-
-    const addTechnology = useCallback(async (techData) => {
-        try {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            const newId = generateId();
-            
-            const newTech = {
-                id: newId,
-                title: techData.title || '',
-                category: techData.category || '',
-                difficulty: techData.difficulty || 'beginner',
-                status: techData.status || 'not-started',
-                description: techData.description || '',
-                notes: techData.notes || '',
-                resources: Array.isArray(techData.resources) ? techData.resources : [],
-                createdAt: new Date().toISOString()
-            };
-
-            setTechnologies(prev => [...prev, newTech]);
-            
-            return newTech;
-
-        } catch (err) {
-            console.error('Error adding technology:', err);
-            throw new Error('Не удалось добавить технологию');
-        }
-    }, [generateId]);
-    
-    const updateTechnology = useCallback((techId, fieldsToUpdate) => {
-        setTechnologies(prev => 
-            prev.map(tech => 
-                tech.id === Number(techId) ? { ...tech, ...fieldsToUpdate } : tech
-            )
-        );
     }, []);
-    
-    const deleteTechnology = useCallback((techId) => {
-        setTechnologies(prev => prev.filter(tech => {
-            const techIdNum = Number(techId);
-            const currentTechId = Number(tech.id);
-            return currentTechId !== techIdNum;
-        }));
-    }, []);
-    
-    const batchAddTechnologies = useCallback(async (techsArray) => {
-        try {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            const newTechs = techsArray.map(techData => ({
-                id: generateId(),
-                title: techData.title || '',
-                category: techData.category || '',
-                difficulty: techData.difficulty || 'beginner',
-                status: techData.status || 'not-started',
-                description: techData.description || '',
-                notes: techData.notes || '',
-                resources: Array.isArray(techData.resources) ? techData.resources : [],
-                createdAt: new Date().toISOString()
-            }));
 
-            setTechnologies(prev => [...prev, ...newTechs]);
-            
-            return newTechs;
-
-        } catch (err) {
-            console.error('Error batch adding technologies:', err);
-            throw new Error('Не удалось добавить технологии');
-        }
-    }, [generateId]);
-    
-    const deleteAllTechnologies = useCallback(() => {
-        setTechnologies([]);
-        localStorage.setItem('dataCleared', 'true');
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([]));
+    // Сброс ресурсов
+    const resetResources = useCallback(() => {
+        setResources([]);
+        setError(null);
     }, []);
-    
-    const markAllCompleted = useCallback(() => {
-        setTechnologies(prev => 
-            prev.map(tech => ({ ...tech, status: 'completed' }))
-        );
-        alert('Все технологии отмечены как "Выполнено"!');
-    }, []);
-    
-    const resetAllStatuses = useCallback(() => {
-        setTechnologies(prev => 
-            prev.map(tech => ({ ...tech, status: 'not-started' }))
-        );
-        alert('Все статусы сброшены на "Не начато"!');
-    }, []);
-    
-    const exportTechnologiesAsJson = useCallback(() => {
-        const jsonString = JSON.stringify(technologies, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `tech_tracker_export_${new Date().toISOString().slice(0, 10)}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }, [technologies]);
-    
-    const stats = useMemo(() => {
-        const completed = technologies.filter(t => t.status === 'completed').length;
-        const total = technologies.length;
-        const progressPercentage = total > 0 ? (completed / total) * 100 : 0;
-        return { completed, total, progressPercentage };
-    }, [technologies]);
-
-    useEffect(() => {
-        fetchTechnologies();
-    }, [fetchTechnologies]);
-
-    useEffect(() => {
-        if (technologies.length > 0 || localStorage.getItem('dataCleared') === 'true') {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(technologies));
-        }
-    }, [technologies]);
 
     return {
-        technologies,
+        resources,
         loading,
         error,
-        stats,
-        addTechnology,
-        updateTechnology,
-        deleteTechnology,
-        deleteAllTechnologies,
-        batchAddTechnologies,
-        markAllCompleted,
-        resetAllStatuses,
-        exportTechnologiesAsJson,
-        refetch: fetchTechnologies
+        fetchResources,
+        resetResources
     };
-}
+};
 
-export default useTechnologiesApi;
+export default useTechResourcesApi;
