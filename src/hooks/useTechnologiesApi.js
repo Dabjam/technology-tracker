@@ -15,163 +15,91 @@ function useTechnologiesApi() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Функция для генерации уникального ID
     const generateId = useCallback(() => {
         return Date.now() + Math.floor(Math.random() * 1000);
     }, []);
 
-    // 1. Загрузка технологий (API + localStorage)
     const fetchTechnologies = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            
-            // ВАЖНОЕ ИЗМЕНЕНИЕ: проверяем специальный флаг, чтобы не загружать мок-данные после очистки
-            const wasCleared = localStorage.getItem('dataCleared');
-            
-            if (storedData && storedData !== '[]' && !wasCleared) {
-                // Если есть сохраненные данные и они не пустые
-                const initialData = JSON.parse(storedData);
-                const validatedData = initialData.map(tech => ({
-                    ...tech,
-                    id: Number(tech.id) || generateId()
-                }));
-                setTechnologies(validatedData);
-            } else if (!wasCleared) {
-                // Только если данные были очищены пользователем явно - не загружаем мок-данные
-                // Вместо этого загружаем пустой массив
-                setTechnologies([]);
-                // Сохраняем пустой массив в localStorage
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([]));
+            setLoading(true);
+            const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (savedData) {
+                setTechnologies(JSON.parse(savedData));
             } else {
-                // Если пользователь очистил данные - показываем пустой массив
-                setTechnologies([]);
+                setTechnologies(mockTechnologies);
             }
-            
         } catch (err) {
-            console.error('Ошибка загрузки данных:', err);
-            setError('Не удалось загрузить данные.');
-            setTechnologies([]); // Вместо мок-данных показываем пустой массив
+            console.error("Ошибка при загрузке данных:", err);
+            setError("Не удалось загрузить данные.");
         } finally {
             setLoading(false);
         }
-    }, [generateId]);
-
-    // 2. Добавление технологии (CREATE)
-    const addTechnology = useCallback(async (techData) => {
-        try {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            const newId = generateId();
-            
-            const newTech = {
-                id: newId,
-                title: techData.title || '',
-                category: techData.category || '',
-                difficulty: techData.difficulty || 'beginner',
-                status: techData.status || 'not-started',
-                description: techData.description || '',
-                notes: techData.notes || '',
-                resources: Array.isArray(techData.resources) ? techData.resources : [],
-                createdAt: new Date().toISOString()
-            };
-
-            setTechnologies(prev => [...prev, newTech]);
-            
-            return newTech;
-
-        } catch (err) {
-            console.error('Error adding technology:', err);
-            throw new Error('Не удалось добавить технологию');
-        }
-    }, [generateId]);
-    
-    // 3. Обновление технологии (UPDATE)
-    const updateTechnology = useCallback((techId, fieldsToUpdate) => {
-        setTechnologies(prev => 
-            prev.map(tech => 
-                tech.id === Number(techId) ? { ...tech, ...fieldsToUpdate } : tech
-            )
-        );
     }, []);
-    
-    // 4. Удаление технологии (DELETE)
-    const deleteTechnology = useCallback((techId) => {
-        setTechnologies(prev => prev.filter(tech => {
-            const techIdNum = Number(techId);
-            const currentTechId = Number(tech.id);
-            return currentTechId !== techIdNum;
-        }));
-    }, []);
-    
-    // 5. Пакетное добавление (для импорта)
-    const batchAddTechnologies = useCallback(async (techsArray) => {
-        try {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            const newTechs = techsArray.map(techData => ({
-                id: generateId(),
-                title: techData.title || '',
-                category: techData.category || '',
-                difficulty: techData.difficulty || 'beginner',
-                status: techData.status || 'not-started',
-                description: techData.description || '',
-                notes: techData.notes || '',
-                resources: Array.isArray(techData.resources) ? techData.resources : [],
-                createdAt: new Date().toISOString()
-            }));
 
-            setTechnologies(prev => [...prev, ...newTechs]);
-            
-            return newTechs;
+    useEffect(() => {
+        fetchTechnologies();
+    }, [fetchTechnologies]);
 
-        } catch (err) {
-            console.error('Error batch adding technologies:', err);
-            throw new Error('Не удалось добавить технологии');
+    useEffect(() => {
+        if (!loading) {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(technologies));
         }
+    }, [technologies, loading]);
+
+    const addTechnology = useCallback((tech) => {
+        const newTech = { 
+            ...tech, 
+            id: generateId(),
+            notes: tech.notes || '',
+            status: tech.status || 'not-started'
+        };
+        setTechnologies(prev => [...prev, newTech]);
     }, [generateId]);
-    
-    // 6. Полное удаление всех данных (НОВАЯ ФУНКЦИЯ)
+
+    const updateTechnology = useCallback((id, updatedFields) => {
+        setTechnologies(prev => prev.map(tech => 
+            tech.id === id ? { ...tech, ...updatedFields } : tech
+        ));
+    }, []);
+
+    const deleteTechnology = useCallback((id) => {
+        setTechnologies(prev => prev.filter(tech => tech.id !== id));
+    }, []);
+
     const deleteAllTechnologies = useCallback(() => {
         setTechnologies([]);
-        // Устанавливаем флаг, что данные были очищены
-        localStorage.setItem('dataCleared', 'true');
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([]));
     }, []);
-    
-    // --- Пакетные операции (Quick Actions) ---
-    
+
+    const batchAddTechnologies = useCallback((newTechs) => {
+        const techsWithIds = newTechs.map(t => ({
+            ...t,
+            id: generateId() + Math.floor(Math.random() * 10000),
+            status: t.status || 'not-started',
+            notes: t.notes || '',
+            resources: t.resources || []
+        }));
+        setTechnologies(prev => [...prev, ...techsWithIds]);
+    }, [generateId]);
+
     const markAllCompleted = useCallback(() => {
-        setTechnologies(prev => 
-            prev.map(tech => ({ ...tech, status: 'completed' }))
-        );
-        alert('Все технологии отмечены как "Выполнено"!');
+        setTechnologies(prev => prev.map(t => ({ ...t, status: 'completed' })));
     }, []);
-    
+
     const resetAllStatuses = useCallback(() => {
-        setTechnologies(prev => 
-            prev.map(tech => ({ ...tech, status: 'not-started' }))
-        );
-        alert('Все статусы сброшены на "Не начато"!');
+        setTechnologies(prev => prev.map(t => ({ ...t, status: 'not-started' })));
     }, []);
-    
+
     const exportTechnologiesAsJson = useCallback(() => {
-        const jsonString = JSON.stringify(technologies, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
+        const dataStr = JSON.stringify(technologies, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `tech_tracker_export_${new Date().toISOString().slice(0, 10)}.json`;
-        document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }, [technologies]);
-    
+
     const stats = useMemo(() => {
         const completed = technologies.filter(t => t.status === 'completed').length;
         const total = technologies.length;
@@ -179,31 +107,11 @@ function useTechnologiesApi() {
         return { completed, total, progressPercentage };
     }, [technologies]);
 
-    useEffect(() => {
-        fetchTechnologies();
-    }, [fetchTechnologies]);
-
-    useEffect(() => {
-        // Сохраняем данные в localStorage при изменении
-        if (technologies.length > 0 || localStorage.getItem('dataCleared') === 'true') {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(technologies));
-        }
-    }, [technologies]);
-
     return {
-        technologies,
-        loading,
-        error,
-        stats,
-        addTechnology,
-        updateTechnology,
-        deleteTechnology,
-        deleteAllTechnologies, // Новая функция для полного удаления
-        batchAddTechnologies,
-        markAllCompleted,
-        resetAllStatuses,
-        exportTechnologiesAsJson,
-        refetch: fetchTechnologies
+        technologies, loading, error, stats,
+        addTechnology, updateTechnology, deleteTechnology, 
+        deleteAllTechnologies, batchAddTechnologies,
+        markAllCompleted, resetAllStatuses, exportTechnologiesAsJson
     };
 }
 

@@ -1,5 +1,3 @@
-// src/pages/TechnologyList.jsx
-
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import useTechnologiesApi from '../hooks/useTechnologiesApi';
@@ -15,60 +13,46 @@ function TechnologyList() {
         loading, 
         error, 
         addTechnology, 
-        deleteTechnology,
-        batchAddTechnologies, // Добавляем новую функцию
+        deleteTechnology, // Теперь используем!
+        batchAddTechnologies,
         markAllCompleted,
-        resetAllStatuses,
-        exportTechnologiesAsJson
+        resetAllStatuses
     } = useTechnologiesApi();
     
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
 
+    // Исправлено: теперь функция не пустая
+    const handleDelete = (id) => {
+        deleteTechnology(id);
+    };
+
     const filteredTechnologies = useMemo(() => {
         let currentList = technologies;
-
         if (activeFilter !== 'all') {
             currentList = currentList.filter(tech => tech.status === activeFilter);
         }
-        
         if (searchTerm) {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
             currentList = currentList.filter(tech => 
                 (tech.title || '').toLowerCase().includes(lowerCaseSearchTerm) ||
-                (tech.description || '').toLowerCase().includes(lowerCaseSearchTerm) ||
-                (tech.notes || '').toLowerCase().includes(lowerCaseSearchTerm)
+                (tech.description || '').toLowerCase().includes(lowerCaseSearchTerm)
             );
         }
-
         return currentList;
     }, [technologies, activeFilter, searchTerm]);
 
-    const handleDelete = (techId) => {
-        if (window.confirm('Удалить эту технологию?')) {
-            deleteTechnology(techId);
-        }
-    };
-
     if (loading) return <div className="loading-state">Загрузка технологий...</div>;
-    if (error) return <div className="error-state">Ошибка загрузки: {error}</div>;
+    if (error) return <div className="error-state">Ошибка: {error}</div>;
 
-    const totalCount = technologies.length;
-    
     return (
         <div className="technology-list-page">
-            <h2>📚 Моя дорожная карта</h2>
-            <Link to="/add" className="btn btn-primary" style={{ marginBottom: '20px' }}>
-                + Добавить новую технологию
-            </Link>
-
-            <div className="controls-container">
+            <div className="list-header-actions">
                 <SearchWithDebounce 
                     onSearchChange={setSearchTerm} 
                     resultsCount={filteredTechnologies.length}
-                    totalCount={totalCount}
+                    totalCount={technologies.length}
                 />
-                
                 <FilterControls 
                     activeFilter={activeFilter}
                     onFilterChange={setActiveFilter}
@@ -79,11 +63,10 @@ function TechnologyList() {
                 <QuickActions 
                     onMarkAllCompleted={markAllCompleted}
                     onResetAllStatuses={resetAllStatuses}
-                    onExportData={exportTechnologiesAsJson}
                 />
                 <RoadmapImporter 
                     addTechnology={addTechnology}
-                    batchAddTechnologies={batchAddTechnologies} // Передаем новую функцию
+                    batchAddTechnologies={batchAddTechnologies}
                 />
             </div>
 
@@ -92,17 +75,15 @@ function TechnologyList() {
                     <TechnologyCard 
                         key={tech.id} 
                         tech={tech}
-                        onDelete={handleDelete}
+                        onDelete={handleDelete} // Передаем исправленную функцию
                     />
                 ))}
             </div>
 
             {filteredTechnologies.length === 0 && (
                 <div className="empty-state">
-                    Технологий пока нет или они не соответствуют поиску/фильтру.
-                    <Link to="/add" className="btn btn-info" style={{ marginTop: '10px' }}>
-                        Добавить первую технологию
-                    </Link>
+                    <p>Технологий пока нет.</p>
+                    <Link to="/add" className="btn btn-info">Добавить технологию</Link>
                 </div>
             )}
         </div>

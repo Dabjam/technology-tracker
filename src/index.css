@@ -105,13 +105,14 @@ body {
     border: none;
     transition: opacity 0.2s;
     font-size: 14px;
+
 }
 
-.btn-primary { background: var(--color-primary); color: white; }
+.btn-primary { background-color: var(--color-primary); color: white; }
 .btn-success { background: var(--color-success); color: white; }
 .btn-warning { background: var(--color-warning); color: white; }
 .btn-danger { background: var(--color-danger); color: white; }
-.btn-info { background: #e0e0e0; color: var(--color-text); }
+.btn-info { background: #e0e0e0; color: black; }
 
 .btn:hover {
     opacity: 0.9;
@@ -651,4 +652,73 @@ body {
     .resources-grid {
         grid-template-columns: 1fr;
     }
+}
+
+
+/* Стили для расширенного поля заметок */
+.notes-section {
+    margin-top: 25px;
+    background: var(--color-card-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    marginBottom: 15px;
+}
+
+.auto-save-badge {
+    font-size: 12px;
+    color: var(--color-success);
+    background: rgba(46, 125, 50, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.notes-container {
+    width: 100%;
+}
+
+.notes-textarea {
+    width: 100%;
+    padding: 15px;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    resize: vertical; /* Позволяет пользователю самому растягивать по высоте */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+    min-height: 300px; /* Минимальная высота */
+}
+
+.notes-textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(90, 125, 255, 0.1);
+}
+
+/* Красивый скроллбар */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.dark-theme .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #475569;
 }
